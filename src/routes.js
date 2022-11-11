@@ -3,6 +3,7 @@ const router = express.Router();
 const { check } = require("express-validator");
 const userController = require("./controllers/userController");
 const authController = require("./controllers/authController");
+const noteController = require("./controllers/noteController");
 const auth = require("./middlewares/authMiddleware");
 
 router.post(
@@ -23,4 +24,15 @@ router.get("/user/:id", auth, userController.getUser);
 
 router.post("/password-reset", userController.sendEmail);
 router.post("/password-reset/:id/:token", userController.resetPassword);
+
+router.post(
+  "/notes",
+  [
+    check("title", "title is required").not().isEmpty(),
+    check("body", "body is required").not().isEmpty(),
+  ],
+  auth,
+  noteController.createNote
+);
+router.get("/notes/:id", auth, noteController.getNotes);
 module.exports = router;
